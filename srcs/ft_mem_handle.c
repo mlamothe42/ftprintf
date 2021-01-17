@@ -6,7 +6,7 @@
 /*   By: mlamothe <mlamothe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 03:34:21 by mlamothe          #+#    #+#             */
-/*   Updated: 2021/01/10 09:45:42 by mlamothe         ###   ########.fr       */
+/*   Updated: 2021/01/15 19:15:27 by mlamothe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,32 @@ char	*ft_reallocate(char *str1, char *str2)
 	while (str1[++i])
 		ret[++j] = str1[i];
 	i = -1;
+	while (str2[++i])
+		ret[++j] = str2[i];
+	ret[j + 1] = 0;
+	free(str2);
+	free(str1);
+	return (ret);
+}
+
+char	*ft_reallocate_int(char *str1, char *str2)
+{
+	int		i;
+	int		j;
+	char	*ret;
+
+	if (!(ret = malloc((ft_strlen(str1) + (ft_strlen(str2) + 1)
+		* sizeof(char)))))
+		return (NULL);
+	i = -1;
+	j = -1;
+	if (str2[0] == '-')
+		ret[++j] = '-';
+	while (str1[++i])
+		ret[++j] = str1[i];
+	i = -1;
+	if (ret[0] == '-')
+		++i;
 	while (str2[++i])
 		ret[++j] = str2[i];
 	ret[j + 1] = 0;

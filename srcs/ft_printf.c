@@ -6,13 +6,11 @@
 /*   By: mlamothe <mlamothe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/27 18:03:34 by mlamothe          #+#    #+#             */
-/*   Updated: 2021/01/10 10:46:16 by mlamothe         ###   ########.fr       */
+/*   Updated: 2021/01/17 17:38:38 by mlamothe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/ft_printf.h"
-
-# include "../libft/libft.h"
+#include <ft_printf.h>
 
 int		ft_select_ft(va_list ap, char **printed, t_options *opts)
 {
@@ -28,8 +26,8 @@ int		ft_select_ft(va_list ap, char **printed, t_options *opts)
 		return (ft_handle_hex(ap, printed, opts));
 	if (opts->conversion == 'u')
 		return (ft_handle_unsigned(ap, printed, opts));
-	if (opts->conversion == '%')
-		return (ft_handle_percent(ap, printed, opts));
+	if (opts->conversion == '\%')
+		return (ft_handle_percent(printed));
 	return (-1);
 }
 
@@ -42,24 +40,19 @@ int		ft_check_type(const char *str, int *i, va_list ap, char **printed)
 	while (ft_is_flag(str[*i]))
 		if (ft_handle_flags(&opts, str[*i], i))
 			return (-1);
-	//printf("flag : %d\n", opts.flags);
-	while (ft_is_number(str[*i]))
-		if (ft_handle_width(&opts, str[*i], i))
-			return (-1);
-	//printf("width : %d\n", opts.width);
+	while (ft_is_sign(str[*i]))
+		ft_handle_sign(&opts, str[*i], i);
+	if (ft_handle_width(ap, &opts, str, i))
+		return (-1);
+	opts.width *= opts.sign;
 	if (str[*i] == '.')
 	{
 		++(*i);
-		while (ft_is_number(str[*i]))
-			if (ft_handle_precision(&opts, str[*i], i))
-				return (-1);
-		if (opts.precision == -1)
-			opts.precision = 0;
+		if (ft_handle_precision(ap, &opts, str, i))
+			return (-1);
 	}
-	//printf("precision : %d\n", opts.precision);
-	if (ft_handle_conversion(&opts, str[*i], i))
+	if (ft_handle_conversion(&opts, str[*i]))
 		return (-1);
-	//printf("conversion : %c\n\n", opts.conversion);
 	return (ft_select_ft(ap, printed, &opts));
 }
 
@@ -77,12 +70,11 @@ int		ft_printf_loop(const char *str, char **printed, va_list ap)
 			*printed = ft_realloc_to(printed, str, j, i);
 			if (ft_check_type(str, &i, ap, printed))
 			{
-				printf("OMG ERREUR CASSEZ VOUS\n");
 				free(*printed);
 				free(printed);
 				return (-1);
 			}
-			j = i;
+			j = i+1;
 		}
 	}
 	*printed = ft_realloc_to(printed, str, j, i);
@@ -93,15 +85,17 @@ int		ft_printf(const char *str, ...)
 {
 	va_list	ap;
 	char	**printed;
+	int		i;
 
 	if (!(printed = malloc(sizeof(char *))))
 		return (-1);
 	va_start(ap, str);
 	if ((ft_printf_loop(str, printed, ap)))
 		return (-1);
-	write(1, *printed, ft_strlen(*printed));
+	write(1, *printed, 53);
 	va_end(ap);
+	i = ft_strlen(*printed);
 	free(*printed);
 	free(printed);
-	return (0);
+	return (i);
 }

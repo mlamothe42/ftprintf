@@ -6,7 +6,7 @@
 /*   By: mlamothe <mlamothe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/10 06:54:07 by mlamothe          #+#    #+#             */
-/*   Updated: 2021/01/10 09:41:51 by mlamothe         ###   ########.fr       */
+/*   Updated: 2021/01/14 22:17:21 by mlamothe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*ft_utoa(unsigned int n)
 	return (word);
 }
 
-char	*ft_xtoa(unsigned int n)
+char	*ft_xtoa(unsigned int n, int cap)
 {
 	unsigned int	nbr;
 	int				i;
@@ -77,9 +77,7 @@ char	*ft_xtoa(unsigned int n)
 		if (nbr % 16 < 10)
 			word[i] = (nbr % 16) + 48;
 		else
-		{
-			word[i] = (nbr % 16) + 87;
-		}
+			word[i] = (nbr % 16) + cap;
 		nbr = nbr / 16;
 	}
 	return (word);
@@ -112,4 +110,30 @@ char	*ft_lxtoa(unsigned long n)
 		nbr = nbr / 16;
 	}
 	return (word);
+}
+
+char *ft_nil(int i)
+{
+	char	*ret;
+
+	if (!(ret = malloc(7)))
+		return (NULL);
+	ret[0] = '(';
+	if(i)
+	{
+		ret[1] = 'n';
+		ret[2] = 'i';
+		ret[3] = 'l';
+		ret[4] = ')';
+		ret[5] = 0;
+	}
+	else{
+		ret[1] = 'n';
+		ret[2] = 'u';
+		ret[3] = 'l';
+		ret[4] = 'l';
+		ret[5] = ')';
+		ret[6] = 0;
+	}
+	return (ret);
 }
